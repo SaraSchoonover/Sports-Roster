@@ -1,36 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import firebase from 'firebase/app';
+import 'firebase/auth';
 import './App.scss';
+import firebaseConfig from '../helpers/apiKeys';
+// import NavBar from './components/NavBar';
+import PlayerForm from '../PlayerForm';
+import Routes from '../helpers/Routes';
+import NavBar from './components/NavBar';
+import { getPlayers } from '../helpers/data/playerData';
+import PlayerCard from './components/PlayerCard';
+
+firebase.initializeApp(firebaseConfig);
 
 function App() {
-  const [domWriting, setDomWriting] = useState('Nothing Here!');
+  const [players, setPlayers] = useState([]);
 
-  const handleClick = (e) => {
-    console.warn(`You clicked ${e.target.id}`);
-    setDomWriting(`You clicked ${e.target.id}! Check the Console!`);
-  };
+  useEffect(() => {
+    getPlayers().then((resp) => setPlayers(resp));
+  }, []);
 
   return (
     <div className='App'>
-      <h2>INSIDE APP COMPONENT</h2>
-      <div>
-        <button
-          id='this-button'
-          className='btn btn-info'
-          onClick={handleClick}
-        >
-          I am THIS button
-        </button>
-      </div>
-      <div>
-        <button
-          id='that-button'
-          className='btn btn-primary mt-3'
-          onClick={handleClick}
-        >
-          I am THAT button
-        </button>
-      </div>
-      <h3>{domWriting}</h3>
+      <NavBar />
+      <Routes />
+      <PlayerForm
+      formTitle='Player Form Name'
+      setPlayers={setPlayers}
+      />
+      {players.map((playerInfo) => (
+         <PlayerCard
+         key={playerInfo.firebaseKey}
+         firebaseKey={playerInfo.firebaseKey}
+         name={playerInfo.name}
+         position={playerInfo.position}
+         imageUrl={playerInfo.imageUrl}
+         setPlayers={setPlayers}
+         />
+      ))}
     </div>
   );
 }

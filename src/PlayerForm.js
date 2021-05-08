@@ -1,17 +1,29 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { addPlayer } from './helpers/data/playerData';
+import { addPlayer, updatePlayer } from './helpers/data/playerData';
 
-const PlayerForm = ({ formTitle, setPlayers }) => {
+const PlayerForm = ({
+  formTitle,
+  setPlayers,
+  name,
+  position,
+  imageUrl,
+  firebaseKey
+}) => {
   const [player, setPlayer] = useState({
-    name: '',
-    position: '',
-    imageUrl: '',
+    name: name || '',
+    position: position || '',
+    imageUrl: imageUrl || '',
+    firebaseKey: firebaseKey || null
   });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    addPlayer(player).then((playerArray) => setPlayers(playerArray));
+    if (player.firebaseKey) {
+      updatePlayer(player).then((playerArray) => setPlayers(playerArray));
+    } else {
+      addPlayer(player).then((playerArray) => setPlayers(playerArray));
+    }
   };
 
   const handleInputChange = (e) => {
@@ -49,7 +61,7 @@ const PlayerForm = ({ formTitle, setPlayers }) => {
         </input>
         <label>Player Image: </label>
         <input
-           name='image'
+           name='imageUrl'
            type='url'
            placeholder='Player Image'
            value={player.imageUrl}
@@ -64,7 +76,11 @@ const PlayerForm = ({ formTitle, setPlayers }) => {
 
 PlayerForm.propTypes = {
   formTitle: PropTypes.string.isRequired,
-  setPlayers: PropTypes.func
+  setPlayers: PropTypes.func,
+  name: PropTypes.string,
+  position: PropTypes.string,
+  imageUrl: PropTypes.url,
+  firebaseKey: PropTypes.string
 };
 
 export default PlayerForm;

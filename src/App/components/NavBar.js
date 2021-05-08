@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unescaped-entities */
+/* eslint-disable react/jsx-no-comment-textnodes */
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
@@ -20,10 +22,10 @@ const NavBar = ({ user }) => {
   const authenticated = () => (
     <>
     <NavItem>
-    <Link className="nav-link" to="/add-players/">Add Players</Link>
+    <Link className="nav-link" id="this" to="/add-players/">Add Players</Link>
   </NavItem>
   <NavItem>
-    <Link className="nav-link" to="/players">Player Cards</Link>
+    <Link className="nav-link" id="that" to="/players">Player Cards</Link>
   </NavItem>
   </>
   );
@@ -31,7 +33,7 @@ const NavBar = ({ user }) => {
   return (
     <div>
       <Navbar color="light" light expand="md">
-        <NavbarBrand href="/">Sports Roster</NavbarBrand>
+        <NavbarBrand href="/">Cooper's Hill Cheese-Rolling and Wake</NavbarBrand>
         <NavbarToggler onClick={toggle} />
         <Collapse isOpen={isOpen} navbar>
           <Nav className="mr-auto" navbar>

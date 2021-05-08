@@ -4,40 +4,47 @@ import 'firebase/auth';
 import './App.scss';
 import firebaseConfig from '../helpers/apiKeys';
 // import NavBar from './components/NavBar';
-import PlayerForm from '../PlayerForm';
 import Routes from '../helpers/Routes';
 import NavBar from './components/NavBar';
 import { getPlayers } from '../helpers/data/playerData';
-import PlayerCard from './components/PlayerCard';
 
 firebase.initializeApp(firebaseConfig);
 
 function App() {
   const [players, setPlayers] = useState([]);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     getPlayers().then((resp) => setPlayers(resp));
   }, []);
 
+  useEffect(() => {
+    firebase.auth().onAuthStateChanged((authed) => {
+      if (authed) {
+        // do something
+        const userInfoObj = {
+          fullName: authed.displayName,
+          profileImage: authed.photoURL,
+          uid: authed.uid,
+          user: authed.email.split('@')[0]
+        };
+        setUser(userInfoObj);
+      } else if (user || user === null) {
+        // do something else
+        setUser(false);
+      }
+    });
+  }, []);
+
   return (
-    <div className='App'>
-      <NavBar />
-      <Routes />
-      <PlayerForm
-      formTitle='Player Form Name'
+    <>
+      <NavBar user={user} />
+      <Routes
+      user={user}
+      players={players}
       setPlayers={setPlayers}
       />
-      {players.map((playerInfo) => (
-         <PlayerCard
-         key={playerInfo.firebaseKey}
-         firebaseKey={playerInfo.firebaseKey}
-         name={playerInfo.name}
-         position={playerInfo.position}
-         imageUrl={playerInfo.imageUrl}
-         setPlayers={setPlayers}
-         />
-      ))}
-    </div>
+   </>
   );
 }
 
